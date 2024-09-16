@@ -17,8 +17,8 @@ class BaseRepository {
       },
     ),
   );
-  Future<Response> executeRequest(RequestType requestType,
-      {Object? data, String path = ""}) async {
+  Future<Response> executeRequest(RequestType requestType, String path,
+      {Object? data}) async {
     try {
       logger.d(_dio.options.baseUrl + path);
       Response? response = await switch (requestType) {

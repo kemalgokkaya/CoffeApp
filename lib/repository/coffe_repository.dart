@@ -11,7 +11,8 @@ class CoffeRepository {
   CoffeRepository._internal() : _baseRepository = BaseRepository();
 
   Future<List<CoffeModel>> getRecipes() async {
-    Response response = await _baseRepository.executeRequest(RequestType.get);
+    Response response =
+        await _baseRepository.executeRequest(RequestType.get, getCoffeURL());
 
     return (response.data as List)
         .map((element) => CoffeModel.fromJson(element))

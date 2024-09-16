@@ -18,6 +18,15 @@ class CoffeController extends StateNotifier<List<CoffeModel>?> {
     }
     ref.read(categoriesProvider.notifier).state = categories;
   }
+
+  Future<List<CoffeModel>?> searchProduct(String query) async {
+    List<CoffeModel>? searchedList = state
+        ?.where((data) =>
+            data.name?.toLowerCase().contains(query.toLowerCase()) ?? false)
+        .toList();
+
+    return searchedList;
+  }
 }
 
 final homeControllerProvider =
@@ -36,4 +45,10 @@ final productsByCategoryProvider = StateProvider<List<CoffeModel>?>(
     return ref.watch(homeControllerProvider);
   },
 );
-final selectCategoryProvider = StateProvider<String?>((ref) => null);
+
+final counterProvider = StateProvider.family<int, String?>((ref, value) => 0);
+final loadingProvider = StateProvider<bool>(
+  (ref) => false,
+);
+final basketProvider = StateProvider<List<CoffeModel>>((ref) => []);
+final favoriteProvider = StateProvider<List<CoffeModel>>((ref) => []);

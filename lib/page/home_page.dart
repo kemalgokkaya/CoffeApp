@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:coffe_app/coffe_app.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 
-class HomeePage extends ConsumerStatefulWidget {
-  const HomeePage({super.key});
+class HomePage extends ConsumerStatefulWidget {
+  const HomePage({super.key});
 
   @override
-  ConsumerState<HomeePage> createState() => _HomeePageState();
+  ConsumerState<HomePage> createState() => _HomeePageState();
 }
 
-class _HomeePageState extends ConsumerState<HomeePage> {
+class _HomeePageState extends ConsumerState<HomePage> {
   @override
   void initState() {
     super.initState();
@@ -148,6 +148,7 @@ class _HomeePageState extends ConsumerState<HomeePage> {
                 ),
               ),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(
                     height: 40,
@@ -174,12 +175,15 @@ class _HomeePageState extends ConsumerState<HomeePage> {
                       ),
                     ],
                   ),
-                  const Text(
-                    "Harika Bir Gün",
-                    style: TextStyle(
-                      fontSize: 24,
-                      color: Colors.black,
-                      fontStyle: FontStyle.italic,
+                  const Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      "Harika Bir Gün",
+                      style: TextStyle(
+                        fontSize: 24,
+                        color: Colors.black,
+                        fontStyle: FontStyle.italic,
+                      ),
                     ),
                   ),
                   const SizedBox(
@@ -222,16 +226,13 @@ class _HomeePageState extends ConsumerState<HomeePage> {
                   const SizedBox(
                     height: 10,
                   ),
-                  Container(
-                    margin: const EdgeInsets.only(right: 280),
-                    child: const Text(
-                      "Categoriler",
-                      style: TextStyle(
-                          fontStyle: FontStyle.italic,
-                          fontSize: 20,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w500),
-                    ),
+                  const Text(
+                    "Kategoriler",
+                    style: TextStyle(
+                        fontStyle: FontStyle.italic,
+                        fontSize: 20,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w500),
                   ),
                   // Kategoriler
                   Container(
@@ -271,6 +272,18 @@ class _HomeePageState extends ConsumerState<HomeePage> {
                       },
                     ),
                   ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  const Text(
+                    "Ürünler",
+                    style: TextStyle(
+                        fontStyle: FontStyle.italic,
+                        fontSize: 20,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w500),
+                  ),
+                  const SizedBox(height: 10),
                   // Ürünler
                   Expanded(
                     child: GridView.builder(
@@ -283,16 +296,16 @@ class _HomeePageState extends ConsumerState<HomeePage> {
                       ),
                       itemCount: productsByCategoryState?.length ?? 0,
                       itemBuilder: (context, index) {
-                        CoffeModel? element = productsByCategoryState?[index];
+                        CoffeModel? product = productsByCategoryState?[index];
                         int count = ref.watch(
-                          counterProvider(element?.id),
+                          counterProvider(product?.id),
                         );
                         var countController =
-                            ref.read(counterProvider(element?.id).notifier);
+                            ref.read(counterProvider(product?.id).notifier);
                         return Stack(
                           children: [
                             InkWell(
-                              onTap: () => showCoffeeInfo(context, element),
+                              onTap: () => showCoffeeInfo(context, product),
                               child: Container(
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(20),
@@ -308,9 +321,9 @@ class _HomeePageState extends ConsumerState<HomeePage> {
                                           borderRadius:
                                               BorderRadius.circular(10),
                                           child: Hero(
-                                            tag: element?.image ?? "",
+                                            tag: product?.image ?? "",
                                             child: CachedNetworkImage(
-                                              imageUrl: element?.image ?? "",
+                                              imageUrl: product?.image ?? "",
                                             ),
                                           ),
                                         ),
@@ -320,7 +333,7 @@ class _HomeePageState extends ConsumerState<HomeePage> {
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: 5),
                                         child: Text(
-                                          element?.name ?? "No Name",
+                                          product?.name ?? "No Name",
                                           textAlign: TextAlign.center,
                                           overflow: TextOverflow.ellipsis,
                                           style: const TextStyle(
@@ -336,18 +349,18 @@ class _HomeePageState extends ConsumerState<HomeePage> {
                                           InkWell(
                                             onTap: () {
                                               if (ref.read(counterProvider(
-                                                      element?.id)) >
+                                                      product?.id)) >
                                                   0) {
                                                 ref
                                                     .read(counterProvider(
-                                                            element?.id)
+                                                            product?.id)
                                                         .notifier)
                                                     .state--;
                                               }
                                               if (ref.read(counterProvider(
-                                                      element?.id)) ==
+                                                      product?.id)) ==
                                                   0) {
-                                                addedProduct.remove(element);
+                                                addedProduct.remove(product);
                                               }
                                             },
                                             child: Container(
@@ -388,14 +401,14 @@ class _HomeePageState extends ConsumerState<HomeePage> {
                                             onTap: () {
                                               countController.state += 1;
                                               if (ref.read(counterProvider(
-                                                      element?.id)) >
+                                                      product?.id)) >
                                                   0) {
                                                 ref
                                                     .read(
                                                         basketProvider.notifier)
                                                     .state = {
                                                   ...ref.read(basketProvider),
-                                                  element!
+                                                  product!
                                                 }.toList();
                                               }
                                             },
@@ -429,13 +442,29 @@ class _HomeePageState extends ConsumerState<HomeePage> {
                                   margin: const EdgeInsets.only(left: 130),
                                   child: IconButton(
                                     onPressed: () {
-                                      ref
-                                          .read(favoriteProvider.notifier)
-                                          .state = ref.read(favoriteProvider);
+                                      var favorites =
+                                          ref.read(favoriteProvider);
+                                      var favoriteController =
+                                          ref.read(favoriteProvider.notifier);
+                                      if (!favorites.contains(product)) {
+                                        favoriteController.state = [
+                                          ...favorites,
+                                          product!
+                                        ];
+                                      } else {
+                                        favoriteController.state = favorites
+                                            .where(
+                                                (element) => element != product)
+                                            .toList();
+                                      }
                                     },
-                                    icon: const Icon(
+                                    icon: Icon(
                                       Icons.favorite,
-                                      color: Colors.white,
+                                      color: ref
+                                              .watch(favoriteProvider)
+                                              .contains(product)
+                                          ? Colors.red
+                                          : Colors.white,
                                     ),
                                   ),
                                 ),

@@ -64,62 +64,69 @@ class ShoppingPageState extends ConsumerState<ShoppingPage> {
                   ),
                 ),
               ),
-              Expanded(
-                child: Container(
-                  width: MediaQuery.sizeOf(context).width,
-                  padding: const EdgeInsets.only(left: 15, right: 15),
-                  child: ListView.builder(
-                    padding: EdgeInsets.zero,
-                    shrinkWrap: true,
-                    scrollDirection: Axis.vertical,
-                    itemCount: basketProduct.length,
-                    itemBuilder: (context, index) {
-                      CoffeModel? element = basketProduct[index];
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          Container(
-                            decoration: const BoxDecoration(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(20),
-                              ),
-                            ),
-                            height: 90,
-                            child: ListTile(
-                              dense: true,
-                              leading: Hero(
-                                tag: basketProduct[index]?.image ?? "",
-                                child: CachedNetworkImage(
-                                  imageUrl: basketProduct[index]?.image ?? "",
+              basketProduct.isNotEmpty
+                  ? Expanded(
+                      child: Container(
+                        width: MediaQuery.sizeOf(context).width,
+                        padding: const EdgeInsets.only(left: 15, right: 15),
+                        child: ListView.builder(
+                          padding: EdgeInsets.zero,
+                          shrinkWrap: true,
+                          scrollDirection: Axis.vertical,
+                          itemCount: basketProduct.length,
+                          itemBuilder: (context, index) {
+                            CoffeModel? element = basketProduct[index];
+                            return Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                const SizedBox(
+                                  height: 20,
                                 ),
-                              ),
-                              title: Text(
-                                "${basketProduct[index]?.name}",
-                                style: const TextStyle(fontSize: 14),
-                              ),
-                              subtitle: Text(
-                                "${basketProduct[index]?.recipeIngredient}",
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  fontSize: 10,
+                                Container(
+                                  decoration: const BoxDecoration(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(20),
+                                    ),
+                                  ),
+                                  height: 90,
+                                  child: ListTile(
+                                    dense: true,
+                                    leading: Hero(
+                                      tag: basketProduct[index]?.image ?? "",
+                                      child: CachedNetworkImage(
+                                        imageUrl:
+                                            basketProduct[index]?.image ?? "",
+                                      ),
+                                    ),
+                                    title: Text(
+                                      "${basketProduct[index]?.name}",
+                                      style: const TextStyle(fontSize: 14),
+                                    ),
+                                    subtitle: Text(
+                                      "${basketProduct[index]?.recipeIngredient}",
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        fontSize: 10,
+                                      ),
+                                    ),
+                                    trailing: Text("${ref.watch(
+                                      counterProvider(element?.id),
+                                    )}"),
+                                  ),
                                 ),
-                              ),
-                              trailing: Text(
-                                  "${ref.watch(counterProvider(element?.id))}"),
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          )
-                        ],
-                      );
-                    },
-                  ),
-                ),
-              ),
+                                const SizedBox(
+                                  height: 20,
+                                )
+                              ],
+                            );
+                          },
+                        ),
+                      ),
+                    )
+                  : const Text(
+                      "Sepetiniz Boş Görünüyor...",
+                      style: TextStyle(color: Colors.black),
+                    ),
               Expanded(
                 child: Container(
                   height: 150,

@@ -1,4 +1,4 @@
-import 'package:coffe_app/page/home_page2.dart';
+import 'package:coffe_app/page/home_page.dart';
 import 'package:flutter/material.dart';
 
 class SplashPage extends StatefulWidget {
@@ -10,22 +10,24 @@ class SplashPage extends StatefulWidget {
 
 class _SplashPageState extends State<SplashPage> {
   @override
-  void initState() {
+  initState() {
     super.initState();
-    _startDelay();
+    _startDelay(context);
   }
 
-  Future<void> _startDelay() async {
+  Future<void> _startDelay(BuildContext context) async {
     await Future.delayed(
       const Duration(seconds: 2),
     );
 
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const HomeePage(),
-      ),
-    );
+    if (context.mounted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const HomePage(),
+        ),
+      );
+    }
   }
 
   @override

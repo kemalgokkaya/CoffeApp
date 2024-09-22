@@ -3,227 +3,171 @@ import 'package:coffe_app/coffe_app.dart';
 
 import 'package:flutter/material.dart';
 
-class ShoppingPage extends ConsumerStatefulWidget {
+class ShoppingPage extends ConsumerWidget {
   const ShoppingPage({super.key});
 
   @override
-  ShoppingPageState createState() => ShoppingPageState();
-}
-
-class ShoppingPageState extends ConsumerState<ShoppingPage> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final List<CoffeModel?> basketProduct = ref.watch(basketProvider);
-    final List<CoffeModel>? suggestionProduct =
-        ref.watch(homeControllerProvider);
-    final List<CoffeModel>? productsByCategoryState =
-        ref.watch(productsByCategoryProvider);
     final List<CoffeModel?> addedProduct = ref.watch(basketProvider);
-
     return Scaffold(
-      body: Stack(
-        children: [
-          Container(
-            width: MediaQuery.sizeOf(context).width,
-            height: MediaQuery.sizeOf(context).height,
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.brown, Colors.white],
-              ),
-            ),
+      extendBody: true,
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        centerTitle: true,
+        title: const Text(
+          "Sepetim",
+          style: TextStyle(fontSize: 25, fontStyle: FontStyle.italic),
+        ),
+      ),
+      body: Container(
+        padding: EdgeInsets.only(top: context.tapPadding + 56),
+        width: MediaQuery.sizeOf(context).width,
+        height: MediaQuery.sizeOf(context).height,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.brown, Colors.white],
           ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Container(
-                height: 100,
-                decoration: const BoxDecoration(
-                  color: Colors.transparent,
-                  borderRadius: BorderRadius.vertical(
-                    bottom: Radius.circular(25),
-                  ),
-                ),
-                child: Container(
-                  margin: const EdgeInsets.all(12),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        ),
+        child: basketProduct.isNotEmpty
+            ? ListView.builder(
+                shrinkWrap: true,
+                padding: EdgeInsets.zero,
+                scrollDirection: Axis.vertical,
+                itemCount: basketProduct.length,
+                itemBuilder: (context, index) {
+                  CoffeModel? product = basketProduct[index];
+                  var countController =
+                      ref.read(counterProvider(product?.id).notifier);
+                  return Column(
                     children: [
-                      IconButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        icon: const Icon(Icons.arrow_back),
-                      ),
-                      const Text(
-                        "Sepetim",
-                        style: TextStyle(
-                            fontSize: 25, fontStyle: FontStyle.italic),
-                      ),
-                      const Icon(Icons.menu)
-                    ],
-                  ),
-                ),
-              ),
-              basketProduct.isNotEmpty
-                  ? Expanded(
-                      child: Container(
-                        width: MediaQuery.sizeOf(context).width,
-                        padding: const EdgeInsets.only(left: 15, right: 15),
-                        child: ListView.builder(
-                          padding: EdgeInsets.zero,
-                          shrinkWrap: true,
-                          scrollDirection: Axis.vertical,
-                          itemCount: basketProduct.length,
-                          itemBuilder: (context, index) {
-                            CoffeModel? element = basketProduct[index];
-                            return Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                const SizedBox(
-                                  height: 20,
+                      Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(30),
+                            color: Colors.white,
+                            boxShadow: const [BoxShadow()],
+                            gradient: const LinearGradient(
+                                colors: [Colors.white, Colors.brown])),
+                        margin: const EdgeInsets.symmetric(horizontal: 5),
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        height: 100,
+                        width: double.infinity,
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.only(left: 5),
+                              width: 120,
+                              height: 100,
+                              child: Hero(
+                                tag: product?.image ?? "",
+                                child: CachedNetworkImage(
+                                  imageUrl: product?.image ?? "",
                                 ),
-                                Container(
-                                  decoration: const BoxDecoration(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(20),
-                                    ),
-                                  ),
-                                  height: 90,
-                                  child: ListTile(
-                                    dense: true,
-                                    leading: Hero(
-                                      tag: basketProduct[index]?.image ?? "",
-                                      child: CachedNetworkImage(
-                                        imageUrl:
-                                            basketProduct[index]?.image ?? "",
-                                      ),
-                                    ),
-                                    title: Text(
+                              ),
+                            ),
+                            Expanded(
+                              child: Container(
+                                margin:
+                                    const EdgeInsets.symmetric(horizontal: 5),
+                                width: 200,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
                                       "${basketProduct[index]?.name}",
                                       style: const TextStyle(fontSize: 14),
                                     ),
-                                    subtitle: Text(
+                                    Text(
                                       "${basketProduct[index]?.recipeIngredient}",
                                       overflow: TextOverflow.ellipsis,
                                       style: const TextStyle(
                                         fontSize: 10,
                                       ),
                                     ),
-                                    trailing: Text("${ref.watch(
-                                      counterProvider(element?.id),
-                                    )}"),
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 20,
-                                )
-                              ],
-                            );
-                          },
-                        ),
-                      ),
-                    )
-                  : const Text(
-                      "Sepetiniz Boş Görünüyor...",
-                      style: TextStyle(color: Colors.black),
-                    ),
-              Expanded(
-                child: Container(
-                  height: 150,
-                  decoration: const BoxDecoration(
-                    color: Colors.transparent,
-                    borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(25)),
-                  ),
-                  child: GridView.builder(
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2),
-                    itemCount: 10,
-                    itemBuilder: (context, index) {
-                      CoffeModel? randomProduct = suggestionProduct?[index];
-                      CoffeModel? element = productsByCategoryState?[index];
-                      var countController =
-                          ref.read(counterProvider(element?.id).notifier);
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Container(
-                            height: 1,
-                            color: Colors.black,
-                          ),
-                          Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.black),
-                            ),
-                            margin: const EdgeInsets.symmetric(horizontal: 20),
-                            child: CachedNetworkImage(
-                                height: 100,
-                                imageUrl: randomProduct?.image ?? ""),
-                          ),
-                          Text(
-                            "${randomProduct?.name}",
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.black26,
-                                  borderRadius: BorderRadius.circular(30),
-                                ),
-                                child: IconButton(
-                                  color: Colors.white,
-                                  onPressed: () {
-                                    countController.state += 1;
-                                    if (ref.read(counterProvider(element?.id)) >
-                                        0) {
-                                      ref.read(basketProvider.notifier).state =
-                                          {
-                                        ...ref.read(basketProvider),
-                                        element!
-                                      }.toList();
-                                    }
-                                  },
-                                  icon: const Icon(Icons.add),
+                                  ],
                                 ),
                               ),
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.black26,
-                                  borderRadius: BorderRadius.circular(30),
+                            ),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Container(
+                                  width: 20,
+                                  height: 20,
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(30)),
+                                  child: Center(
+                                    child: Text(
+                                      "${ref.watch(counterProvider(product?.id))}",
+                                      style:
+                                          const TextStyle(color: Colors.black),
+                                    ),
+                                  ),
                                 ),
-                                child: IconButton(
-                                  color: Colors.white,
-                                  onPressed: () {
-                                    if (ref.read(counterProvider(element?.id)) >
-                                        0) {
-                                      ref
-                                          .read(counterProvider(element?.id)
-                                              .notifier)
-                                          .state--;
-                                    }
-                                    if (ref.read(
-                                            counterProvider(element?.id)) ==
-                                        0) {
-                                      addedProduct.remove(element);
-                                    }
-                                  },
-                                  icon: const Icon(Icons.remove),
-                                ),
-                              )
-                            ],
-                          ),
-                        ],
-                      );
-                    },
-                  ),
+                                Row(
+                                  children: [
+                                    IconButton(
+                                      onPressed: () {
+                                        countController.state += 1;
+                                        if (ref.read(
+                                                counterProvider(product?.id)) >
+                                            0) {
+                                          ref
+                                              .read(basketProvider.notifier)
+                                              .state = {
+                                            ...ref.read(basketProvider),
+                                            product!
+                                          }.toList();
+                                        }
+                                      },
+                                      icon: const Icon(
+                                        Icons.add,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    IconButton(
+                                      onPressed: () {
+                                        if (ref.read(
+                                                counterProvider(product?.id)) >
+                                            0) {
+                                          ref
+                                              .read(counterProvider(product?.id)
+                                                  .notifier)
+                                              .state--;
+                                        }
+                                        if (ref.read(
+                                                counterProvider(product?.id)) ==
+                                            0) {
+                                          addedProduct.remove(product);
+                                        }
+                                      },
+                                      icon: const Icon(
+                                        Icons.remove,
+                                        color: Colors.white,
+                                      ),
+                                    )
+                                  ],
+                                )
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      )
+                    ],
+                  );
+                },
+              )
+            : const Center(
+                child: Text(
+                  "Sepetiniz Boş Görünüyor...",
+                  style: TextStyle(color: Colors.black, fontSize: 26),
                 ),
               ),
-            ],
-          ),
-        ],
       ),
     );
   }

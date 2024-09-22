@@ -13,8 +13,7 @@ class _FavoritePageState extends ConsumerState<FavoritePage> {
   @override
   Widget build(BuildContext context) {
     final favoriteProduct = ref.watch(favoriteProvider);
-    final List<CoffeModel>? productsByCategoryState =
-        ref.watch(productsByCategoryProvider);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.brown,
@@ -36,7 +35,7 @@ class _FavoritePageState extends ConsumerState<FavoritePage> {
                 itemCount: favoriteProduct.length,
                 itemBuilder: (BuildContext context, int index) {
                   CoffeModel favProduct = favoriteProduct[index];
-                  CoffeModel? product = productsByCategoryState?[index];
+
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -51,23 +50,14 @@ class _FavoritePageState extends ConsumerState<FavoritePage> {
                           ),
                           IconButton(
                             onPressed: () {
-                              var favorites = ref.read(favoriteProvider);
-                              var favoriteController =
-                                  ref.read(favoriteProvider.notifier);
-                              if (!favorites.contains(product)) {
-                                favoriteController.state = [
-                                  ...favorites,
-                                  product!
-                                ];
-                              } else {
-                                favoriteController.state = favorites
-                                    .where((element) => element != product)
-                                    .toList();
-                              }
+                              ref.read(favoriteProvider.notifier).state =
+                                  favoriteProduct
+                                      .where((element) => element != favProduct)
+                                      .toList();
                             },
                             icon: const Icon(
                               Icons.delete,
-                              color: Colors.black,
+                              color: Colors.white,
                             ),
                           ),
                         ],

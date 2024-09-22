@@ -17,6 +17,7 @@ class CoffeController extends StateNotifier<List<CoffeModel>?> {
       }
     }
     ref.read(categoriesProvider.notifier).state = categories;
+    ref.read(loadingProvider.notifier).state = false;
   }
 
   Future<List<CoffeModel>?> searchProduct(String query) async {
@@ -48,7 +49,7 @@ final productsByCategoryProvider = StateProvider<List<CoffeModel>?>(
 
 final counterProvider = StateProvider.family<int, String?>((ref, value) => 0);
 final loadingProvider = StateProvider<bool>(
-  (ref) => false,
+  (ref) => true,
 );
 final basketProvider = StateProvider<List<CoffeModel>>((ref) => []);
 final favoriteProvider = StateProvider<List<CoffeModel>>((ref) => []);

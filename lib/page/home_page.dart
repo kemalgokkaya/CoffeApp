@@ -29,108 +29,7 @@ class _HomeePageState extends ConsumerState<HomePage> {
     final List<CoffeModel>? productsByCategoryState =
         ref.watch(productsByCategoryProvider);
     final List<CoffeModel?> addedProduct = ref.watch(basketProvider);
-
-    void showCoffeeInfo(BuildContext context, CoffeModel? element) {
-      showModalBottomSheet(
-        context: context,
-        builder: (BuildContext context) {
-          return SingleChildScrollView(
-            child: Container(
-              decoration: const BoxDecoration(
-                color: Color.fromRGBO(110, 63, 0, 1),
-                borderRadius: BorderRadius.vertical(
-                  top: Radius.circular(20),
-                ),
-              ),
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      ElevatedButton(
-                        child: const Icon(Icons.close),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ],
-                  ),
-                  Text(
-                    "${element?.name}",
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 22,
-                        fontStyle: FontStyle.italic),
-                  ),
-                  Text(
-                    "${element?.category}",
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontStyle: FontStyle.italic),
-                  ),
-                  Container(
-                    decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(30),
-                      ),
-                    ),
-                    child: Hero(
-                      tag: element?.image ?? "",
-                      child: CachedNetworkImage(
-                        imageUrl: element?.image ?? "",
-                      ),
-                    ),
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Step 1 -" "${element?.recipeIngredient?[0]}",
-                        style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 19,
-                            fontStyle: FontStyle.italic),
-                      ),
-                      Text(
-                        "Step 2 -" "${element?.recipeIngredient?[1]}",
-                        style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 19,
-                            fontStyle: FontStyle.italic),
-                      ),
-                      Text(
-                        "Step 3 - " "${element?.recipeIngredient?[2]},",
-                        style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 19,
-                            fontStyle: FontStyle.italic),
-                      ),
-                      Text(
-                        "Step 4 -" "${element?.recipeIngredient?[3]}",
-                        style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 19,
-                            fontStyle: FontStyle.italic),
-                      ),
-                    ],
-                  ),
-                  Text(
-                    "${element?.description}",
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontStyle: FontStyle.italic),
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
-      );
-    }
+    final isLoading = ref.watch(loadingProvider);
 
     return SafeArea(
       child: Scaffold(
@@ -153,27 +52,13 @@ class _HomeePageState extends ConsumerState<HomePage> {
                   const SizedBox(
                     height: 40,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        "Kahve İçmek İçin",
-                        style: TextStyle(
-                          fontSize: 24,
-                          color: Colors.black,
-                          fontStyle: FontStyle.italic,
-                        ),
-                      ),
-                      Container(
-                        width: 40,
-                        height: 40,
-                        decoration: const BoxDecoration(),
-                        child: const Icon(
-                          Icons.notifications,
-                          size: 30,
-                        ),
-                      ),
-                    ],
+                  const Text(
+                    "Kahve İçmek İçin",
+                    style: TextStyle(
+                      fontSize: 24,
+                      color: Colors.black,
+                      fontStyle: FontStyle.italic,
+                    ),
                   ),
                   const Align(
                     alignment: Alignment.center,
@@ -199,9 +84,9 @@ class _HomeePageState extends ConsumerState<HomePage> {
                         autofocus: false,
                         style: const TextStyle(color: Colors.white),
                         decoration: const InputDecoration(
-                          focusedBorder: InputBorder.none,
-                          border: InputBorder.none,
-                          hintStyle: TextStyle(color: Colors.grey),
+                          focusedBorder: UnderlineInputBorder(),
+                          border: UnderlineInputBorder(),
+                          hintStyle: TextStyle(color: Colors.white),
                           hintText: "Ne İçmek İstersin?...",
                         ),
                       ),
@@ -235,43 +120,52 @@ class _HomeePageState extends ConsumerState<HomePage> {
                         fontWeight: FontWeight.w500),
                   ),
                   // Kategoriler
-                  Container(
-                    height: 50,
-                    color: Colors.transparent,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: categoryState.length,
-                      itemBuilder: (context, index) {
-                        String category = categoryState[index];
-                        return Container(
-                          decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(20)),
-                          ),
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          alignment: Alignment.center,
-                          child: TextButton(
-                            onPressed: () {
-                              List<CoffeModel>? newList = state
-                                  ?.where((data) => data.category == category)
-                                  .toList();
-                              ref
-                                  .read(productsByCategoryProvider.notifier)
-                                  .state = newList;
+                  isLoading
+                      ? const Center(
+                          child: CircularProgressIndicator(
+                          color: Colors.white,
+                        ))
+                      : Container(
+                          height: 50,
+                          color: Colors.transparent,
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: categoryState.length,
+                            itemBuilder: (context, index) {
+                              String category = categoryState[index];
+                              return Container(
+                                decoration: const BoxDecoration(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(20)),
+                                ),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8),
+                                alignment: Alignment.center,
+                                child: TextButton(
+                                  onPressed: () {
+                                    List<CoffeModel>? newList = state
+                                        ?.where(
+                                            (data) => data.category == category)
+                                        .toList();
+                                    ref
+                                        .read(
+                                            productsByCategoryProvider.notifier)
+                                        .state = newList;
+                                  },
+                                  child: Text(
+                                    category,
+                                    style: const TextStyle(
+                                      fontStyle: FontStyle.italic,
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                ),
+                              );
                             },
-                            child: Text(
-                              category,
-                              style: const TextStyle(
-                                fontStyle: FontStyle.italic,
-                                color: Colors.white,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
                           ),
-                        );
-                      },
-                    ),
-                  ),
+                        ),
                   const SizedBox(
                     height: 10,
                   ),
@@ -285,196 +179,224 @@ class _HomeePageState extends ConsumerState<HomePage> {
                   ),
                   const SizedBox(height: 10),
                   // Ürünler
-                  Expanded(
-                    child: GridView.builder(
-                      padding: EdgeInsets.zero,
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        mainAxisSpacing: 10,
-                        crossAxisSpacing: 15,
-                        crossAxisCount: 2,
-                      ),
-                      itemCount: productsByCategoryState?.length ?? 0,
-                      itemBuilder: (context, index) {
-                        CoffeModel? product = productsByCategoryState?[index];
-                        int count = ref.watch(
-                          counterProvider(product?.id),
-                        );
-                        var countController =
-                            ref.read(counterProvider(product?.id).notifier);
-                        return Stack(
-                          children: [
-                            InkWell(
-                              onTap: () => showCoffeeInfo(context, product),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                  color: Colors.white,
-                                ),
-                                child: InkWell(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        decoration: const BoxDecoration(),
-                                        child: ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          child: Hero(
-                                            tag: product?.image ?? "",
-                                            child: CachedNetworkImage(
-                                              imageUrl: product?.image ?? "",
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      const Spacer(),
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 5),
-                                        child: Text(
-                                          product?.name ?? "No Name",
-                                          textAlign: TextAlign.center,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: const TextStyle(
-                                              fontStyle: FontStyle.italic,
-                                              fontWeight: FontWeight.w700),
-                                        ),
-                                      ),
-                                      const SizedBox(height: 5),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          InkWell(
-                                            onTap: () {
-                                              if (ref.read(counterProvider(
-                                                      product?.id)) >
-                                                  0) {
-                                                ref
-                                                    .read(counterProvider(
-                                                            product?.id)
-                                                        .notifier)
-                                                    .state--;
-                                              }
-                                              if (ref.read(counterProvider(
-                                                      product?.id)) ==
-                                                  0) {
-                                                addedProduct.remove(product);
-                                              }
-                                            },
-                                            child: Container(
-                                              padding: const EdgeInsets.all(5),
-                                              decoration: const BoxDecoration(
-                                                color: Colors.brown,
-                                                borderRadius: BorderRadius.only(
-                                                  bottomLeft:
-                                                      Radius.circular(20),
-                                                ),
-                                              ),
-                                              child: const Icon(
-                                                Icons.remove,
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                          ),
-                                          Container(
-                                            decoration: BoxDecoration(
-                                              color: count > 0
-                                                  ? const Color.fromARGB(
-                                                      31, 197, 192, 192)
-                                                  : Colors.white,
-                                              borderRadius:
-                                                  const BorderRadius.all(
-                                                Radius.circular(30),
-                                              ),
-                                            ),
-                                            child: count == 0
-                                                ? const SizedBox.shrink()
-                                                : Text(
-                                                    count.toString(),
-                                                    style: const TextStyle(
-                                                        color: Colors.black),
-                                                  ),
-                                          ),
-                                          InkWell(
-                                            onTap: () {
-                                              countController.state += 1;
-                                              if (ref.read(counterProvider(
-                                                      product?.id)) >
-                                                  0) {
-                                                ref
-                                                    .read(
-                                                        basketProvider.notifier)
-                                                    .state = {
-                                                  ...ref.read(basketProvider),
-                                                  product!
-                                                }.toList();
-                                              }
-                                            },
-                                            child: Container(
-                                              padding: const EdgeInsets.all(5),
-                                              decoration: const BoxDecoration(
-                                                color: Colors.brown,
-                                                borderRadius: BorderRadius.only(
-                                                  bottomRight:
-                                                      Radius.circular(20),
-                                                ),
-                                              ),
-                                              child: const Icon(
-                                                Icons.add,
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
+                  isLoading
+                      ? const Center(
+                          child: CircularProgressIndicator(
+                          color: Colors.white,
+                        ))
+                      : Expanded(
+                          child: GridView.builder(
+                            padding: EdgeInsets.zero,
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                              mainAxisSpacing: 10,
+                              crossAxisSpacing: 15,
+                              crossAxisCount: 2,
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  margin: const EdgeInsets.only(left: 130),
-                                  child: IconButton(
-                                    onPressed: () {
-                                      var favorites =
-                                          ref.read(favoriteProvider);
-                                      var favoriteController =
-                                          ref.read(favoriteProvider.notifier);
-                                      if (!favorites.contains(product)) {
-                                        favoriteController.state = [
-                                          ...favorites,
-                                          product!
-                                        ];
-                                      } else {
-                                        favoriteController.state = favorites
-                                            .where(
-                                                (element) => element != product)
-                                            .toList();
-                                      }
-                                    },
-                                    icon: Icon(
-                                      Icons.favorite,
-                                      color: ref
-                                              .watch(favoriteProvider)
-                                              .contains(product)
-                                          ? Colors.red
-                                          : Colors.white,
+                            itemCount: productsByCategoryState?.length ?? 0,
+                            itemBuilder: (context, index) {
+                              CoffeModel? product =
+                                  productsByCategoryState?[index];
+                              int count = ref.watch(
+                                counterProvider(product?.id),
+                              );
+                              var countController = ref
+                                  .read(counterProvider(product?.id).notifier);
+                              return Stack(
+                                children: [
+                                  InkWell(
+                                    onTap: () =>
+                                        showCoffeeInfo(context, product),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(20),
+                                        color: Colors.white,
+                                      ),
+                                      child: InkWell(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              decoration: const BoxDecoration(),
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                child: Hero(
+                                                  tag: product?.image ?? "",
+                                                  child: CachedNetworkImage(
+                                                    imageUrl:
+                                                        product?.image ?? "",
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            const Spacer(),
+                                            Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 5),
+                                              child: Text(
+                                                product?.name ?? "No Name",
+                                                textAlign: TextAlign.center,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: const TextStyle(
+                                                    fontStyle: FontStyle.italic,
+                                                    fontWeight:
+                                                        FontWeight.w700),
+                                              ),
+                                            ),
+                                            const SizedBox(height: 5),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                InkWell(
+                                                  onTap: () {
+                                                    if (ref.read(
+                                                            counterProvider(
+                                                                product?.id)) >
+                                                        0) {
+                                                      ref
+                                                          .read(counterProvider(
+                                                                  product?.id)
+                                                              .notifier)
+                                                          .state--;
+                                                    }
+                                                    if (ref.read(
+                                                            counterProvider(
+                                                                product?.id)) ==
+                                                        0) {
+                                                      addedProduct
+                                                          .remove(product);
+                                                    }
+                                                  },
+                                                  child: Container(
+                                                    padding:
+                                                        const EdgeInsets.all(5),
+                                                    decoration:
+                                                        const BoxDecoration(
+                                                      color: Colors.brown,
+                                                      borderRadius:
+                                                          BorderRadius.only(
+                                                        bottomLeft:
+                                                            Radius.circular(20),
+                                                      ),
+                                                    ),
+                                                    child: const Icon(
+                                                      Icons.remove,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                ),
+                                                Container(
+                                                  decoration: BoxDecoration(
+                                                    color: count > 0
+                                                        ? const Color.fromARGB(
+                                                            31, 197, 192, 192)
+                                                        : Colors.white,
+                                                    borderRadius:
+                                                        const BorderRadius.all(
+                                                      Radius.circular(30),
+                                                    ),
+                                                  ),
+                                                  child: count == 0
+                                                      ? const SizedBox.shrink()
+                                                      : Text(
+                                                          count.toString(),
+                                                          style:
+                                                              const TextStyle(
+                                                                  color: Colors
+                                                                      .black),
+                                                        ),
+                                                ),
+                                                InkWell(
+                                                  onTap: () {
+                                                    countController.state += 1;
+                                                    if (ref.read(
+                                                            counterProvider(
+                                                                product?.id)) >
+                                                        0) {
+                                                      ref
+                                                          .read(basketProvider
+                                                              .notifier)
+                                                          .state = {
+                                                        ...ref.read(
+                                                            basketProvider),
+                                                        product!
+                                                      }.toList();
+                                                    }
+                                                  },
+                                                  child: Container(
+                                                    padding:
+                                                        const EdgeInsets.all(5),
+                                                    decoration:
+                                                        const BoxDecoration(
+                                                      color: Colors.brown,
+                                                      borderRadius:
+                                                          BorderRadius.only(
+                                                        bottomRight:
+                                                            Radius.circular(20),
+                                                      ),
+                                                    ),
+                                                    child: const Icon(
+                                                      Icons.add,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
-                            )
-                          ],
-                        );
-                      },
-                    ),
-                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        margin:
+                                            const EdgeInsets.only(left: 130),
+                                        child: IconButton(
+                                          onPressed: () {
+                                            var favorites =
+                                                ref.read(favoriteProvider);
+                                            var favoriteController = ref.read(
+                                                favoriteProvider.notifier);
+                                            if (!favorites.contains(product)) {
+                                              favoriteController.state = [
+                                                ...favorites,
+                                                product!
+                                              ];
+                                            } else {
+                                              favoriteController.state =
+                                                  favorites
+                                                      .where((element) =>
+                                                          element != product)
+                                                      .toList();
+                                            }
+                                          },
+                                          icon: Icon(
+                                            Icons.favorite,
+                                            color: ref
+                                                    .watch(favoriteProvider)
+                                                    .contains(product)
+                                                ? Colors.red
+                                                : Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                ],
+                              );
+                            },
+                          ),
+                        ),
                 ],
               ),
             ),

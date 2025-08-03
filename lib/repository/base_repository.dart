@@ -1,4 +1,5 @@
 import 'package:coffe_app/coffe_app.dart';
+import 'package:coffe_app/core/utils/logger.dart';
 
 class BaseRepository {
   static final BaseRepository _instance = BaseRepository._internal();

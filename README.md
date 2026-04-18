@@ -1,16 +1,40 @@
-# coffe_app
+# CoffeApp
 
-A new Flutter project.
+CoffeApp, Flutter ile ürün hissi olan sade ama karakterli bir kahve uygulaması denemesidir. Bu repo, daha hafif ölçekli bir proje üzerinden arayüz düzeni, görsel ton ve kullanıcı akışı pratiğimi göstermesi açısından önemlidir.
 
-## Getting Started
+## Proje Özeti
 
-This project is a starting point for a Flutter application.
+- Flutter ile geliştirilen kahve temalı mobil uygulama
+- UI odaklı ürün yaklaşımı
+- Listeleme, görsel sunum ve akış hissi üzerine çalışma
+- Daha temiz ve sade ekran kompozisyonları
 
-A few resources to get you started if this is your first Flutter project:
+## Kullandığım Teknolojiler
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- Flutter
+- Dart
+- Dio
+- Riverpod
+- CachedNetworkImage
+- Shimmer
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Projede Odaklandığım Alanlar
+
+- Kullanıcıyı yormayan ekran düzeni
+- Kart yapıları ve içerik sunumu
+- Görsel hiyerarşi
+- Akıcı mobil arayüz hissi
+
+## Görsel
+
+![CoffeApp görseli](assets/coffe.jpg)
+
+## Neden Bu Repo Değerli?
+
+Her proje büyük ve kompleks olmak zorunda değil. CoffeApp, küçük ölçekte bile temiz ürün düşüncesi ve görsel karar verebildiğimi gösteren iyi bir destekleyici çalışma.
+
+## İletişim
+
+- GitHub: [github.com/kemalgokkaya](https://github.com/kemalgokkaya)
+- Portfolyo: [portfolyo-jade-six.vercel.app](https://portfolyo-jade-six.vercel.app)
+- E-posta: [kemalgokkaya8@gmail.com](mailto:kemalgokkaya8@gmail.com)
